@@ -1,20 +1,18 @@
 import * as style from "./assets/styles/global.style";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import ConfigAxios from "./utils/configAxios";
+import { Task } from "./assets/types";
 
 const App = () => {
-  const [taskData, setTaskData] = useState<[]>([]);
+  const [taskData, setTaskData] = useState<Task[]>([]);
 
   useEffect(() => {
     const fetchTaskData = async () => {
       try {
-        const result = await axios.get(
-          // 'http://3.135.77.77:4000/'
-          "/api/tasks"
-        );
+        const result = await axios.get("/api/tasks");
         setTaskData(result.data);
       } catch (e) {
+        alert(`can not create, reason: ${JSON.stringify(e)}`);
         console.log("error = ", e);
       }
     };
@@ -23,7 +21,13 @@ const App = () => {
 
   // console.log("task data = ", taskData);
 
-  return <div className={style.AppContainer}>{"Hello" + taskData}</div>;
+  return (
+    <div className={style.AppContainer}>
+      {taskData.map((e) => {
+        return <div>{e.title}</div>;
+      })}
+    </div>
+  );
 };
 
 export default App;
