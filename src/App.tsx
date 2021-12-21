@@ -24,9 +24,7 @@ const App = () => {
   // console.log("task data = ", taskData);
 
   return (
-    <div className={style.AppContainer}>
-      {'Hello' + taskData}
-    </div>
+    <div className={style.AppContainer}>{"Hello" + taskData}</div>
   )
 };
 
