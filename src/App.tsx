@@ -9,7 +9,7 @@ const App = () => {
   useEffect(() => {
     const fetchTaskData = async () => {
       try {
-        const result = await ConfigAxios.get(
+        const result = await axios.get(
           // 'http://3.135.77.77:4000/'
           "/api/tasks"
         );
@@ -23,9 +23,7 @@ const App = () => {
 
   // console.log("task data = ", taskData);
 
-  return (
-    <div className={style.AppContainer}>{"Hello" + taskData}</div>
-  )
+  return <div className={style.AppContainer}>{"Hello" + taskData}</div>;
 };
 
 export default App;

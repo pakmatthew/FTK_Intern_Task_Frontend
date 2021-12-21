@@ -1,2 +1,2 @@
-/api/*    https://api.domain.com/:splat   200 
+/api/*    https://3.135.77.77:4000/:splat   200 
 /*    /index.html   200
