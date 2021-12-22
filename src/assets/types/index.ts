@@ -7,12 +7,12 @@ export interface Task{
 
 export enum TaskStatus{
   NEW = 'NEW',
-  IN_PROGRESS = 'IN_PROGRESS',
   COMPLETE = 'COMPLETE'
 }
 
 export enum TaskClickAction {
   DELETE = "DELETE",
   EDIT = "EDIT",
+  NEW = 'NEW',
   COMPLETE = "COMPLETE",
 }

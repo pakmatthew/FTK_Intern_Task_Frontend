@@ -2,8 +2,8 @@ import { ColorTypes } from "@fantaskticedtechlimited/fantasktic-comp-library/lib
 import { style } from "typestyle";
 
 export const PopupContainer = (
-    screenHeight: number,
-    screenWidth: number
+    screenWidth: number,
+    screenHeight: number
 ) => style({
     display: 'flex',
     flexDirection: "column",
@@ -11,7 +11,7 @@ export const PopupContainer = (
     border: "2px solid "+ ColorTypes.BLACK,
     borderRadius: 8,
     padding: 16,
-    width: screenWidth * 0.4,
+    width: screenWidth * 0.35,
     backgroundColor: ColorTypes.PUREWHITE,
     position: 'absolute',
     top: 0,

@@ -1,7 +1,7 @@
 import * as style from "./assets/styles/global.style";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Task, TaskClickAction } from "./assets/types";
+import { Task, TaskClickAction, TaskStatus } from "./assets/types";
 import { TaskField } from "./components/taskField";
 import {
   FBottomNavigation,
@@ -18,7 +18,8 @@ import ScreenSize from "./utils";
 
 const App = () => {
   // const [,width] = ScreenSize()
-  const [taskData, setTaskData] = useState<Task[]>([]);
+  const [newTaskData, setNewTaskData] = useState<Task[]>([]);
+  const [completedTaskData, setCompletedTaskData] = useState<Task[]>([])
   const [isCreate, setIsCreate] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isDelete, setIsDelete] = useState<boolean>(false);
@@ -30,42 +31,68 @@ const App = () => {
   const fetchTaskData = async () => {
     try {
       const result = await axios.get("/api/tasks");
-      let tempTaskSeqNumber: number[] = [];
+      let tempNewTaskSeqNumber: number[] = [];
+      let tempCompletedTaskSeqNumber: number[] = [];
       if (result.data.length > 0) {
         result.data.map((task: Task) => {
-          tempTaskSeqNumber.push(task.seqNumber);
+          if(task.status === TaskStatus.NEW)
+            tempNewTaskSeqNumber.push(task.seqNumber);
+          if(task.status === TaskStatus.COMPLETE)
+            tempCompletedTaskSeqNumber.push(task.seqNumber)
         });
-        console.log("old SeqNumber = ", tempTaskSeqNumber);
-        for (let index = 0; index < tempTaskSeqNumber.length; index++) {
-          if (index !== tempTaskSeqNumber.length) {
-            if (tempTaskSeqNumber[index] > tempTaskSeqNumber[index + 1]) {
+        for (let index = 0; index < tempNewTaskSeqNumber.length; index++) {
+          if (index !== tempNewTaskSeqNumber.length) {
+            if (tempNewTaskSeqNumber[index] > tempNewTaskSeqNumber[index + 1]) {
               let tempNumber;
-              tempNumber = tempTaskSeqNumber[index + 1];
-              tempTaskSeqNumber[index + 1] = tempTaskSeqNumber[index];
-              tempTaskSeqNumber[index] = tempNumber;
+              tempNumber = tempNewTaskSeqNumber[index + 1];
+              tempNewTaskSeqNumber[index + 1] = tempNewTaskSeqNumber[index];
+              tempNewTaskSeqNumber[index] = tempNumber;
             }
-            if (tempTaskSeqNumber[index] < tempTaskSeqNumber[index - 1]) {
+            if (tempNewTaskSeqNumber[index] < tempNewTaskSeqNumber[index - 1]) {
               let tempNumber;
-              tempNumber = tempTaskSeqNumber[index - 1];
-              tempTaskSeqNumber[index - 1] = tempTaskSeqNumber[index];
-              tempTaskSeqNumber[index] = tempNumber;
+              tempNumber = tempNewTaskSeqNumber[index - 1];
+              tempNewTaskSeqNumber[index - 1] = tempNewTaskSeqNumber[index];
+              tempNewTaskSeqNumber[index] = tempNumber;
             }
           }
         }
-        console.log("updated SeqNumber = ", tempTaskSeqNumber);
-        let updatedTaskData: Task[] = [];
-        tempTaskSeqNumber.map((order: number) => {
+        for (let index = 0; index < tempCompletedTaskSeqNumber.length; index++) {
+          if (index !== tempCompletedTaskSeqNumber.length) {
+            if (tempCompletedTaskSeqNumber[index] > tempCompletedTaskSeqNumber[index + 1]) {
+              let tempNumber;
+              tempNumber = tempCompletedTaskSeqNumber[index + 1];
+              tempCompletedTaskSeqNumber[index + 1] = tempCompletedTaskSeqNumber[index];
+              tempCompletedTaskSeqNumber[index] = tempNumber;
+            }
+            if (tempCompletedTaskSeqNumber[index] < tempCompletedTaskSeqNumber[index - 1]) {
+              let tempNumber;
+              tempNumber = tempCompletedTaskSeqNumber[index - 1];
+              tempCompletedTaskSeqNumber[index - 1] = tempCompletedTaskSeqNumber[index];
+              tempCompletedTaskSeqNumber[index] = tempNumber;
+            }
+          }
+        }
+        let updatedNewTaskData: Task[] = [];
+        let updatedCompletedTaskData: Task[] = [];
+        tempNewTaskSeqNumber.map((order: number) => {
           result.data.map((task: Task) => {
             if (order === task.seqNumber) {
-              updatedTaskData.push(task);
+              updatedNewTaskData.push(task);
+            }
+          });
+        });        
+        tempCompletedTaskSeqNumber.map((order: number) => {
+          result.data.map((task: Task) => {
+            if (order === task.seqNumber) {
+              updatedCompletedTaskData.push(task);
             }
           });
         });
-        console.log("updated data = ", updatedTaskData);
-        setTaskData(updatedTaskData);
+        setNewTaskData(updatedNewTaskData);
+        setCompletedTaskData(updatedCompletedTaskData);
       }
     } catch (e) {
-      alert(`can not fetch data, reason: ${JSON.stringify(e)}`);
+      alert(`Data cannot be fetched, reason: ${JSON.stringify(e)}`);
       console.log("error = ", e);
     }
   };
@@ -78,7 +105,9 @@ const App = () => {
     setIsEdit(false);
     setIsCreate(false);
     setIsDelete(false);
-    setTaskData([]);
+    setIsComplete(false)
+    setNewTaskData([]);
+    setCompletedTaskData([])
     setNewTaskName("");
     setNewSeqNumber("");
     setAssignedTaskId("");
@@ -91,7 +120,6 @@ const App = () => {
         seqNumber: parseInt(newSeqNumber),
       };
       const result = await axios.post("/api/tasks", newData);
-      console.log("status = ", result.status);
       if (result.status === 201) {
         ClearAction();
         fetchTaskData();
@@ -106,23 +134,23 @@ const App = () => {
     }
   };
 
-  const handleTaskClickAction = (id: string, action: TaskClickAction) => {
-    setAssignedTaskId(id);
-    if (action === TaskClickAction.EDIT) setIsEdit(true);
-    else if (action === TaskClickAction.DELETE) setIsDelete(true);
-  };
-
-  const EditTask = async () => {
+  const EditTask = async (
+    taskName?: string,
+    taskSeqNumber?: string,
+    taskStatus?: TaskStatus
+  ) => {
     try {
       const newData = {
-        name: newTaskName,
-        seqNumber: parseInt(newSeqNumber),
+        name: taskName ?? newTaskName,
+        seqNumber: parseInt(taskSeqNumber ?? newSeqNumber),
+        status: taskStatus ?? TaskStatus.NEW
       };
+      // console.log("hello")
+      // console.log("id = ", assignedTaskId)
       const result = await axios.patch(
         `/api/tasks/${assignedTaskId}/edit`,
         newData
       );
-      console.log("status = ", result.status);
       if (result.status === 200) {
         ClearAction();
         fetchTaskData();
@@ -136,7 +164,6 @@ const App = () => {
   const DeleteTask = async () => {
     try {
       const result = await axios.delete(`/api/tasks/${assignedTaskId}`);
-      console.log("status = ", result.status);
       if (result.status === 200) {
         ClearAction();
         fetchTaskData();
@@ -146,6 +173,45 @@ const App = () => {
       console.log("error = ", error);
     }
   };
+
+  const GetTaskDataById = async() => {
+    // console.log("id = ", assignedTaskId)
+    try {
+      const result = await axios.get(
+        `/api/tasks/${assignedTaskId}`
+      )
+      if(result.status === 200){ 
+        console.log("id = ", assignedTaskId)
+        EditTask(
+          result.data.name,
+          result.data.seqNumber as string,
+          result.data.status === TaskStatus.COMPLETE ?
+            TaskStatus.NEW : TaskStatus.COMPLETE
+        )
+      }
+    } catch (error) {
+      alert(`ERROR: Task cannot be fetched, reason: ${JSON.stringify(error)}`);
+      console.log("error = ", error);
+    }
+  }
+
+  const handleTaskClickAction = (id: string, action: TaskClickAction) => {
+    console.log("id = ", id)
+    setAssignedTaskId(id);
+    if (action === TaskClickAction.EDIT) setIsEdit(true);
+    else if (action === TaskClickAction.DELETE) setIsDelete(true);
+      // else GetTaskDataById()
+    else if (action === TaskClickAction.NEW) setIsComplete(false)
+    else setIsComplete(true)
+  };
+
+  useEffect(() => {
+    console.log("id = ", assignedTaskId)
+    if(assignedTaskId.length > 0){
+      GetTaskDataById()
+      ClearAction()
+    }
+  }, [isComplete])
 
   return (
     <div className={style.AppContainer}>
@@ -157,27 +223,46 @@ const App = () => {
         />
       </div>
       <div className={style.MainContainer}>
-        <div className={style.MainContainerHeader}>
-          <FStyledText
-            font={FontTypes.M16}
-            color={ColorTypes.BRAND}
-            children="Plan to do:"
-          />
-          <FButton
-            type="primary"
-            onClick={() => setIsCreate(true)}
-            children="Add new task"
-          />
-        </div>
-        {taskData.map((task: Task, index: number) => {
-          return (
-            <TaskField
-              key={index}
-              data={task}
-              onClickAction={handleTaskClickAction}
+        <div className={style.NewTaskContainer}>
+          <div className={style.NewTaskContainerHeader}>
+            <FStyledText
+              font={FontTypes.M16}
+              color={ColorTypes.BRAND}
+              children="Plan to do:"
             />
-          );
-        })}
+            <FButton
+              type="primary"
+              onClick={() => setIsCreate(true)}
+              children="Add new task"
+            />
+          </div>
+          {newTaskData.map((task: Task, index: number) => {
+            return (
+              <TaskField
+                key={index}
+                data={task}
+                onClickAction={handleTaskClickAction}
+              />
+            );
+          })}
+        </div>
+        <div className={style.CompletedTaskContainer}> 
+          <FStyledText
+            font={FontTypes.B16}
+            color={ColorTypes.PUREWHITE}
+            align="center"
+            children="I have completed:"
+          />   
+          {completedTaskData.map((task: Task, index: number) => {
+            return (
+              <TaskField
+                key={index}
+                data={task}
+                onClickAction={handleTaskClickAction}
+              />
+            );
+          })}
+        </div>
         {isCreate && (
           <PopUp title="Create New Task" renderOpenPopup={setIsCreate}>
             <FInputField
@@ -186,7 +271,7 @@ const App = () => {
               renderValue={setNewTaskName}
             />
             <FInputField
-              label="Task Sequence Number"
+              label="Sequence Number"
               value={newSeqNumber}
               renderValue={setNewSeqNumber}
             />
@@ -207,7 +292,7 @@ const App = () => {
               renderValue={setNewTaskName}
             />
             <FInputField
-              label="Edit Task Sequence Number"
+              label="Edit Sequence Number"
               value={newSeqNumber}
               renderValue={setNewSeqNumber}
             />
@@ -216,12 +301,12 @@ const App = () => {
               actionButtonName="Confirm"
               actionButtonColor={ColorTypes.BRAND}
               onLeadingButtonClick={() => setIsEdit(false)}
-              onActionButtonClick={EditTask}
+              onActionButtonClick={() => EditTask()}
             />
           </PopUp>
         )}
         {isDelete && (
-          <PopUp title="Delete Task" renderOpenPopup={setIsDelete}>
+          <PopUp title="Delete this task?" renderOpenPopup={setIsDelete}>
             <FBottomNavigation
               leadingButtonName="Cancel"
               actionButtonName="Confirm"

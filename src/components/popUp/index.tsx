@@ -8,7 +8,7 @@ import { FontTypes, ColorTypes } from "@fantaskticedtechlimited/fantasktic-comp-
 
 export const PopUp = (props: PopupProps) => {
     const PopupRef = useRef<HTMLDivElement>(null)
-    const [height, width] = ScreenSize()
+    const [width, height] = ScreenSize()
 
     const ClickPopupOutside = (event: any) => {
         if (
@@ -28,7 +28,7 @@ export const PopUp = (props: PopupProps) => {
     return(
         <div
             ref={PopupRef} 
-            className={style.PopupContainer(height, width)}
+            className={style.PopupContainer(width, height)}
         >
             <FStyledText
                 font={FontTypes.B16}

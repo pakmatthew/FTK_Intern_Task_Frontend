@@ -20,13 +20,31 @@ export const HeaderContainer = style({
 export const MainContainer = style({
     display: 'flex',
     flexDirection: 'column',
-    rowGap: 12,
+    rowGap: 32,
     padding: 16
 })
 
-export const MainContainerHeader = style({
+export const NewTaskContainer = style({
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    rowGap: 24
+})
+
+export const NewTaskContainerHeader = style({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     width: '100%'
+})
+
+export const CompletedTaskContainer = style({
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    rowGap: 24,
+    borderRadius: 8,
+    border: "2px dashed "+ColorTypes.BLACK,
+    backgroundColor: ColorTypes.GREY
 })
