@@ -4,7 +4,8 @@ import { style } from "typestyle";
 export const taskDiv = style({
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    columnGap: 8,
+    alignItems: 'center',
     borderRadius: 4,
     border: "2px solid "+ColorTypes.BLACK,
     padding: 8,

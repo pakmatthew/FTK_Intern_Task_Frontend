@@ -1,19 +1,18 @@
-
-export interface Task{
+export interface Task {
   id: string;
   name: string;
   seqNumber: string;
-  status: TaskStatus
+  status: TaskStatus;
 }
 
 export enum TaskStatus{
-  OPEN = 'OPEN',
+  NEW = 'NEW',
   IN_PROGRESS = 'IN_PROGRESS',
-  DONE = 'DONE'
+  COMPLETE = 'COMPLETE'
 }
 
-export enum TaskClickAction{
-  DELETE = 'DELETE',
-  EDIT = 'EDIT',
-  COMPLETE = 'COMPLETE'
+export enum TaskClickAction {
+  DELETE = "DELETE",
+  EDIT = "EDIT",
+  COMPLETE = "COMPLETE",
 }

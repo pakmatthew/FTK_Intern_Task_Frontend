@@ -15,11 +15,25 @@ export const TaskField = (props: TaskFieldProps) => {
                 color={ColorTypes.BLACK}
                 children={taskName}
             />
-            {/* Delete Icon */}
-            {/* Edit Icon */}
             <FSVGButton
                 size='small'
-                onClick={()=>props.onClickAction(TaskClickAction.EDIT)}
+                onClick={()=>props.onClickAction(
+                    props.data.id,
+                    TaskClickAction.DELETE
+                )}
+            >
+                <FIcon
+                    size='small'
+                    name="delete"
+                    strokeColor={ColorTypes.RED}
+                />
+            </FSVGButton>
+            <FSVGButton
+                size='small'
+                onClick={()=>props.onClickAction(
+                    props.data.id,
+                    TaskClickAction.EDIT
+                )}
             >
                 <FIcon
                     size='small'
