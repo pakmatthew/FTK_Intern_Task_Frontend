@@ -33,7 +33,7 @@ const App = () => {
       let tempTaskSeqNumber: number[] = [];
       if (result.data.length > 0) {
         result.data.map((task: Task) => {
-          tempTaskSeqNumber.push(parseInt(task.seqNumber));
+          tempTaskSeqNumber.push(task.seqNumber);
         });
         console.log("old SeqNumber = ", tempTaskSeqNumber);
         for (let index = 0; index < tempTaskSeqNumber.length; index++) {
@@ -56,7 +56,7 @@ const App = () => {
         let updatedTaskData: Task[] = [];
         tempTaskSeqNumber.map((order: number) => {
           result.data.map((task: Task) => {
-            if (order === parseInt(task.seqNumber)) {
+            if (order === task.seqNumber) {
               updatedTaskData.push(task);
             }
           });
@@ -77,7 +77,7 @@ const App = () => {
   const ClearAction = () => {
     setIsEdit(false);
     setIsCreate(false);
-    setIsDelete(false)
+    setIsDelete(false);
     setTaskData([]);
     setNewTaskName("");
     setNewSeqNumber("");
@@ -88,7 +88,7 @@ const App = () => {
     try {
       const newData = {
         name: newTaskName,
-        seqNumber: newSeqNumber,
+        seqNumber: parseInt(newSeqNumber),
       };
       const result = await axios.post("/api/tasks", newData);
       console.log("status = ", result.status);
@@ -97,7 +97,11 @@ const App = () => {
         fetchTaskData();
       }
     } catch (error) {
-      alert(`ERROR: Task cannot be created, reason: ${JSON.stringify(error)}`);
+      if(newTaskName === "")
+        alert("Error: No name input.")
+      else if(newSeqNumber === "")
+        alert("Error: No Sequence Number input.")
+      else alert(`ERROR: Task cannot be created, reason: ${JSON.stringify(error)}`);
       console.log("error = ", error);
     }
   };
@@ -112,7 +116,7 @@ const App = () => {
     try {
       const newData = {
         name: newTaskName,
-        seqNumber: newSeqNumber,
+        seqNumber: parseInt(newSeqNumber),
       };
       const result = await axios.patch(
         `/api/tasks/${assignedTaskId}/edit`,

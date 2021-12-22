@@ -1,8 +1,8 @@
-export interface Task {
+export interface Task{
   id: string;
   name: string;
-  seqNumber: string;
-  status: TaskStatus;
+  seqNumber: number;
+  status: TaskStatus
 }
 
 export enum TaskStatus{
