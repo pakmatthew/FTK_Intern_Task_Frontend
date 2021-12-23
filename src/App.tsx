@@ -1,19 +1,19 @@
 import * as style from "./assets/styles/global.style";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Task, TaskClickAction, TaskStatus } from "./assets/types";
-import { TaskField } from "./components/taskField";
+import { Task, TaskClickAction, TaskStatus } from "./assets/types"; 
 import {
 	FBottomNavigation,
 	FButton,
 	FInputField,
 	FStyledText,
-} from "@fantaskticedtechlimited/fantasktic-comp-library";
+  PopUp,
+  TaskField
+} from "./components/";
 import {
 	FontTypes,
 	ColorTypes,
-} from "@fantaskticedtechlimited/fantasktic-comp-library/lib/esm/types";
-import { PopUp } from "./components/popUp";
+} from "./assets/types"
 
 const App = () => {
 	const [newTaskData, setNewTaskData] = useState<Task[]>([]);
