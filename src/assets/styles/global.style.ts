@@ -8,11 +8,12 @@ export const AppContainer = style({
     height: "100vh", 
     display: "flex", 
     flexDirection: "column",
+    rowGap: 32,
     backgroundColor: ColorTypes.PUREWHITE
 })
 
 export const HeaderContainer = style({
-    backgroundColor: ColorTypes.LIGHT_GREYISHWHITE,
+    backgroundColor: ColorTypes.PUREWHITE,
     borderBottom: "2px solid "+ColorTypes.BLACK,
     padding: 16
 })
@@ -20,8 +21,8 @@ export const HeaderContainer = style({
 export const MainContainer = style({
     display: 'flex',
     flexDirection: 'column',
-    rowGap: 32,
-    padding: 16
+    padding: 16,
+    paddingTop: 0
 })
 
 export const NewTaskContainer = style({
@@ -44,7 +45,7 @@ export const CompletedTaskContainer = style({
     display: 'flex',
     flexDirection: 'column',
     rowGap: 24,
-    borderRadius: 8,
-    border: "2px dashed "+ColorTypes.BLACK,
+    padding: 16,
+    borderTop: "2px dashed "+ColorTypes.BLACK,
     backgroundColor: ColorTypes.GREY
 })

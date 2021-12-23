@@ -14,19 +14,17 @@ import {
   ColorTypes,
 } from "@fantaskticedtechlimited/fantasktic-comp-library/lib/esm/types";
 import { PopUp } from "./components/popUp";
-import ScreenSize from "./utils";
 
 const App = () => {
-  // const [,width] = ScreenSize()
   const [newTaskData, setNewTaskData] = useState<Task[]>([]);
   const [completedTaskData, setCompletedTaskData] = useState<Task[]>([])
   const [isCreate, setIsCreate] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isDelete, setIsDelete] = useState<boolean>(false);
-  const [isComplete, setIsComplete] = useState<boolean>(false);
   const [newTaskName, setNewTaskName] = useState<string>("");
   const [newSeqNumber, setNewSeqNumber] = useState<string>("");
   const [assignedTaskId, setAssignedTaskId] = useState<string>("");
+  const [newTaskStatus, setNewTaskStatus] = useState<TaskStatus>(TaskStatus.NEW)
 
   const fetchTaskData = async () => {
     try {
@@ -105,7 +103,6 @@ const App = () => {
     setIsEdit(false);
     setIsCreate(false);
     setIsDelete(false);
-    setIsComplete(false)
     setNewTaskData([]);
     setCompletedTaskData([])
     setNewTaskName("");
@@ -134,23 +131,18 @@ const App = () => {
     }
   };
 
-  const EditTask = async (
-    taskName?: string,
-    taskSeqNumber?: string,
-    taskStatus?: TaskStatus
-  ) => {
+  const EditTask = async () => {
     try {
       const newData = {
-        name: taskName ?? newTaskName,
-        seqNumber: parseInt(taskSeqNumber ?? newSeqNumber),
-        status: taskStatus ?? TaskStatus.NEW
-      };
-      // console.log("hello")
-      // console.log("id = ", assignedTaskId)
+        name: newTaskName,
+        seqNumber: parseInt(newSeqNumber),
+        status: newTaskStatus
+      }
       const result = await axios.patch(
         `/api/tasks/${assignedTaskId}/edit`,
         newData
       );
+      console.log("HELLO")
       if (result.status === 200) {
         ClearAction();
         fetchTaskData();
@@ -174,44 +166,32 @@ const App = () => {
     }
   };
 
-  const GetTaskDataById = async() => {
-    // console.log("id = ", assignedTaskId)
-    try {
-      const result = await axios.get(
-        `/api/tasks/${assignedTaskId}`
-      )
-      if(result.status === 200){ 
-        console.log("id = ", assignedTaskId)
-        EditTask(
-          result.data.name,
-          result.data.seqNumber as string,
-          result.data.status === TaskStatus.COMPLETE ?
-            TaskStatus.NEW : TaskStatus.COMPLETE
-        )
-      }
-    } catch (error) {
-      alert(`ERROR: Task cannot be fetched, reason: ${JSON.stringify(error)}`);
-      console.log("error = ", error);
-    }
-  }
-
-  const handleTaskClickAction = (id: string, action: TaskClickAction) => {
-    console.log("id = ", id)
-    setAssignedTaskId(id);
+  const handleTaskClickAction = (
+    data: Task, 
+    action: TaskClickAction
+  ) => {
+    setAssignedTaskId(data.id);
     if (action === TaskClickAction.EDIT) setIsEdit(true);
     else if (action === TaskClickAction.DELETE) setIsDelete(true);
-      // else GetTaskDataById()
-    else if (action === TaskClickAction.NEW) setIsComplete(false)
-    else setIsComplete(true)
+    else {
+      setNewTaskName(data.name)
+      setNewSeqNumber(data.seqNumber.toString())
+      setNewTaskStatus(
+        action === TaskClickAction.NEW ?
+          TaskStatus.NEW : TaskStatus.COMPLETE
+      )
+    }
   };
 
   useEffect(() => {
-    console.log("id = ", assignedTaskId)
-    if(assignedTaskId.length > 0){
-      GetTaskDataById()
-      ClearAction()
+    if(
+      assignedTaskId !== "" &&
+      isEdit !== true &&
+      isDelete !== true
+    ){
+      EditTask()
     }
-  }, [isComplete])
+  }, [assignedTaskId, newTaskStatus])
 
   return (
     <div className={style.AppContainer}>
@@ -237,23 +217,6 @@ const App = () => {
             />
           </div>
           {newTaskData.map((task: Task, index: number) => {
-            return (
-              <TaskField
-                key={index}
-                data={task}
-                onClickAction={handleTaskClickAction}
-              />
-            );
-          })}
-        </div>
-        <div className={style.CompletedTaskContainer}> 
-          <FStyledText
-            font={FontTypes.B16}
-            color={ColorTypes.PUREWHITE}
-            align="center"
-            children="I have completed:"
-          />   
-          {completedTaskData.map((task: Task, index: number) => {
             return (
               <TaskField
                 key={index}
@@ -301,7 +264,7 @@ const App = () => {
               actionButtonName="Confirm"
               actionButtonColor={ColorTypes.BRAND}
               onLeadingButtonClick={() => setIsEdit(false)}
-              onActionButtonClick={() => EditTask()}
+              onActionButtonClick={EditTask}
             />
           </PopUp>
         )}
@@ -316,6 +279,23 @@ const App = () => {
             />
           </PopUp>
         )}
+      </div>
+      <div className={style.CompletedTaskContainer}> 
+        <FStyledText
+          font={FontTypes.B16}
+          color={ColorTypes.PUREWHITE}
+          align="center"
+          children="I have completed:"
+        />   
+        {completedTaskData.map((task: Task, index: number) => {
+          return (
+            <TaskField
+              key={index}
+              data={task}
+              onClickAction={handleTaskClickAction}
+            />
+          );
+        })}
       </div>
     </div>
   );

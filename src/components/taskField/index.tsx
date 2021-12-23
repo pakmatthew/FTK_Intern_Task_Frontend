@@ -16,19 +16,20 @@ export const TaskField = (props: TaskFieldProps) => {
                 size='small'
                 isToggled={isComplete}
                 onClick={()=>props.onClickAction(
-                    props.data.id,
+                    props.data,
                     isComplete ? TaskClickAction.NEW : TaskClickAction.COMPLETE
                 )}
             />
             <FStyledText
                 font={FontTypes.B16}
                 color={ColorTypes.BLACK}
+                decoration={isComplete ? "line-through" : "none"}
                 children={taskName}
             />
             <FSVGButton
                 size='small'
                 onClick={()=>props.onClickAction(
-                    props.data.id,
+                    props.data,
                     TaskClickAction.DELETE
                 )}
             >
@@ -41,7 +42,7 @@ export const TaskField = (props: TaskFieldProps) => {
             <FSVGButton
                 size='small'
                 onClick={()=>props.onClickAction(
-                    props.data.id,
+                    props.data,
                     TaskClickAction.EDIT
                 )}
             >
