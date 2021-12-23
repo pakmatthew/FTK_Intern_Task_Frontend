@@ -4,8 +4,10 @@ import { FCheckbox } from "./checkbox"
 import { FIcon } from "./icon"
 import { FInputField } from "./input"  
 import { FStyledText } from "./text"
+import { FSVGButton } from "./svgButton"
 import { PopUp } from "./popUp"
 import { TaskField } from "./taskField"
+import { FSelector } from "./selector"
 
 export { 
     FBottomNavigation,
@@ -15,5 +17,7 @@ export {
     FInputField, 
     FStyledText,
     PopUp,
-    TaskField
+    TaskField,
+    FSVGButton,
+    FSelector
 }

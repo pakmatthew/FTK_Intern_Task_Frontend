@@ -1,5 +1,5 @@
-import { FCheckbox, FIcon, FSelector, FStyledText, FSVGButton } from '@fantaskticedtechlimited/fantasktic-comp-library'
-import { ColorTypes, FontTypes } from '@fantaskticedtechlimited/fantasktic-comp-library/lib/esm/types'
+import { FCheckbox, FIcon, FSelector, FStyledText, FSVGButton } from '../../components'
+import { ColorTypes, FontTypes } from '../../assets/types'
 import { TaskClickAction } from '../../assets/types'
 import * as style from './styles'
 import { TaskFieldProps } from './types'

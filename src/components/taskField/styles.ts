@@ -1,4 +1,4 @@
-import { ColorTypes } from "@fantaskticedtechlimited/fantasktic-comp-library/lib/esm/types";
+import { ColorTypes } from "../../assets/types";
 import { style } from "typestyle";
 
 export const taskDiv = style({
