@@ -40,6 +40,13 @@ export const NewTaskContainerHeader = style({
     width: '100%'
 })
 
+export const NewTaskContainerHeaderButtonDiv = style({
+    display: 'flex',
+    flexDirection: 'row',
+    columnGap: 8,
+    alignItems: 'center'
+})
+
 export const CompletedTaskContainer = style({
     flex: 1,
     display: 'flex',
